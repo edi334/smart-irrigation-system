@@ -1,11 +1,15 @@
+#include <LiquidCrystal.h>;
+
 #define SM_PIN A5
 #define TEMP_PIN A1
 #define RAIN_PIN A0
-#define BLUE_LED 11
-#define WHITE_LED 12
+#define BLUE_LED 9
+#define WHITE_LED 10
 
 #define SOIL_THRESHOLD 100
 #define RAIN_THRESHOLD 100
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 // daca temp < 10 grade nu pornim
 // daca soil is dry si nu ploua, pornim pompa
 // daca soil is wet, oprim pompa
@@ -14,6 +18,10 @@
 //white_led -> pompa oprita
 
 void setup() {
+  lcd.begin(16, 2);
+  lcd.print("Smart Irrigation");
+  lcd.setCursor(4, 1);
+  lcd.print("System!");
   pinMode(BLUE_LED, OUTPUT);
   pinMode(WHITE_LED, OUTPUT);
   Serial.begin(9600);
@@ -31,13 +39,13 @@ void loop() {
 
   if (tempCelsius > 10.0) {
     if (sm_value < SOIL_THRESHOLD && rain_output < RAIN_THRESHOLD) {
-      startPump();
+      startPump(tempCelsius);
     } else {
-      stopPump();
+      stopPump(tempCelsius);
     }
   }
   else {
-    stopPump();
+    stopPump(tempCelsius);
   }
 
   Serial.print("Soil value ");
@@ -64,12 +72,24 @@ float getTempInCelsius(int temp_value) {
   return temperatureC;
 }
 
-void startPump() {
+void startPump(int tempCelsius) {
+  lcd.clear();
+  lcd.setCursor(2, 0);
+  lcd.print("Pompa pornita");
+  lcd.setCursor(0, 1);
+  lcd.print(tempCelsius);
+  lcd.print(" grade Celsius");
   digitalWrite(BLUE_LED, HIGH);
   digitalWrite(WHITE_LED, LOW);
 }
 
-void stopPump() {
+void stopPump(int tempCelsius) {
+  lcd.clear();
+  lcd.setCursor(2, 0);
+  lcd.print("Pompa oprita");
+  lcd.setCursor(0, 1);
+  lcd.print(tempCelsius); 
+  lcd.print(" grade Celsius");
   digitalWrite(WHITE_LED, HIGH);
   digitalWrite(BLUE_LED, LOW);
 }

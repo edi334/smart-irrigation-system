@@ -5,6 +5,9 @@
 #define RAIN_PIN A0
 #define BLUE_LED 9
 #define WHITE_LED 10
+#define EN_A 13
+#define IN1 6
+#define IN2 7
 
 #define SOIL_THRESHOLD 100
 #define RAIN_THRESHOLD 100
@@ -25,9 +28,16 @@ void setup() {
   pinMode(BLUE_LED, OUTPUT);
   pinMode(WHITE_LED, OUTPUT);
   Serial.begin(9600);
+  pinMode(EN_A, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
 }
 
 void loop() {
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, HIGH);
+  analogWrite(EN_A,255);
+
   int temp_value = analogRead(TEMP_PIN);
 
   int sm_value = analogRead(SM_PIN);
@@ -81,6 +91,9 @@ void startPump(int tempCelsius) {
   lcd.print(" grade Celsius");
   digitalWrite(BLUE_LED, HIGH);
   digitalWrite(WHITE_LED, LOW);
+
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
 }
 
 void stopPump(int tempCelsius) {
@@ -92,4 +105,7 @@ void stopPump(int tempCelsius) {
   lcd.print(" grade Celsius");
   digitalWrite(WHITE_LED, HIGH);
   digitalWrite(BLUE_LED, LOW);
+
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, HIGH);
 }
